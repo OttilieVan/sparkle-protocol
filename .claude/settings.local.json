@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install:*)",
+      "Bash(npx tsc:*)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(python3 -c \"import sys,json; data=json.load\\(sys.stdin\\); [print\\(d[''''type''''],d[''''text''''][:300]\\) for d in data[-5:]]\")",
+      "Bash(chmod +x /Users/ottilie/Desktop/edufi-studio/start-dev.sh)",
+      "Bash(grep -r \"turbopack\\\\|turbo\" /Users/ottilie/Desktop/edufi-studio/node_modules/next/dist/docs/ --include=*.md -l)",
+      "Bash(node_modules/.bin/tsc --noEmit --skipLibCheck)",
+      "Bash(/usr/local/bin/node node_modules/.bin/tsc --noEmit --skipLibCheck)",
+      "Bash(/usr/local/bin/npx tsc:*)",
+      "Bash(/usr/local/bin/node -e \"console.log\\(''ok''\\)\")",
+      "Bash(PATH=/usr/local/bin:$PATH /usr/local/bin/node /usr/local/bin/npx tsc --noEmit)",
+      "Bash(PATH=/usr/local/bin:$PATH find /Users/ottilie/Desktop/edufi-studio -name \"layout.tsx\")",
+      "Bash(ls /Users/ottilie/Desktop/edufi-studio/*.d.ts)"
+    ]
+  }
+}

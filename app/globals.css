@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────────
+   Three-color philosophy:
+   • Off-white (#F8F4EE)  — the canvas, never busy
+   • Vermilion (#DC321E)  — interaction point, energy, live state
+   • Amber     (#D97706)  — compute flow, earnings, in-progress warmth
+   • Indigo    (#4F46E5)  — logic depth, knowledge, reasoning assets
+──────────────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  --color-bg: #F8F4EE;
+  --color-surface: #FFFFFF;
+  --color-vermilion: #DC321E;
+  --color-amber: #D97706;
+  --color-indigo: #4F46E5;
+  --color-text: #1C1917;
+  --color-muted: #78716C;
+  --color-subtle: #A8A29E;
+  --font-sans: var(--font-geist-sans);
+  --font-serif: var(--font-playfair);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: #F8F4EE;
+  color: #1C1917;
+  font-family: var(--font-geist-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── Keyframes ───────────────────────────────────────────────────────────── */
+
+@keyframes pulse-glow-red {
+  0%, 100% { box-shadow: 0 0 12px rgba(220,50,30,0.12), 0 2px 16px rgba(0,0,0,0.04); }
+  50%       { box-shadow: 0 0 32px rgba(220,50,30,0.38), 0 4px 24px rgba(220,50,30,0.10); }
+}
+@keyframes pulse-glow-amber {
+  0%, 100% { box-shadow: 0 0 12px rgba(217,119,6,0.12); }
+  50%       { box-shadow: 0 0 32px rgba(217,119,6,0.42); }
+}
+@keyframes pulse-glow-indigo {
+  0%, 100% { box-shadow: 0 0 12px rgba(79,70,229,0.12); }
+  50%       { box-shadow: 0 0 32px rgba(79,70,229,0.40); }
+}
+@keyframes breathe {
+  0%, 100% { opacity: 0.65; transform: scale(1); }
+  50%       { opacity: 1;    transform: scale(1.04); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-7px); }
+}
+@keyframes holographic-shift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+@keyframes spin-slow  { from { transform: rotate(0deg); }   to { transform: rotate(360deg); } }
+@keyframes spin-rev   { from { transform: rotate(0deg); }   to { transform: rotate(-360deg); } }
+@keyframes flow-right {
+  0%   { transform: translateX(-100%); opacity: 0; }
+  40%  { opacity: 1; }
+  100% { transform: translateX(100%);  opacity: 0; }
+}
+@keyframes star-pulse {
+  0%, 100% { opacity: 0.6; r: 6; }
+  50%       { opacity: 1;   r: 9; }
+}
+
+/* ─── Utility Classes ─────────────────────────────────────────────────────── */
+
+.animate-pulse-glow         { animation: pulse-glow-red   2.5s ease-in-out infinite; }
+.animate-pulse-glow-amber   { animation: pulse-glow-amber 2.5s ease-in-out infinite; }
+.animate-pulse-glow-indigo  { animation: pulse-glow-indigo 2.5s ease-in-out infinite; }
+.animate-breathe            { animation: breathe 3s ease-in-out infinite; }
+.animate-float              { animation: float   4s ease-in-out infinite; }
+.animate-spin-slow          { animation: spin-slow  14s linear infinite; }
+.animate-spin-rev           { animation: spin-rev   18s linear infinite; }
+.animate-flow-right         { animation: flow-right 1.8s ease-in-out infinite; }
+
+/* Glass surfaces */
+.glass {
+  background: rgba(255,255,255,0.62);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.75);
+}
+.glass-warm {
+  background: rgba(248,244,238,0.72);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.6);
+}
+
+/* Holographic border gradient */
+.holographic {
+  background: linear-gradient(
+    135deg,
+    #ff6b9d 0%, #a855f7 18%, #3b82f6 34%, #06b6d4 50%,
+    #10b981 64%, #eab308 78%, #f97316 90%, #ef4444 100%
+  );
+  background-size: 300% 300%;
+  animation: holographic-shift 4s ease infinite;
+}
+
+/* Shimmer text — Vermilion only, used sparingly */
+.shimmer-text {
+  background: linear-gradient(90deg, #DC321E 0%, #f96d5a 42%, #DC321E 60%, #b02618 100%);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+
+/* Progress bars */
+.progress-vermilion {
+  background: linear-gradient(90deg, #b02618, #DC321E, #ff6348);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+.progress-amber {
+  background: linear-gradient(90deg, #b45309, #D97706, #f59e0b);
+  background-size: 200% 100%;
+  animation: shimmer 2s linear infinite;
+}
+
+/* Flowing credit particle trail */
+.credit-flow {
+  animation: flow-right 1.8s ease-in-out infinite;
+}
+
+/* Serif helper */
+.font-serif {
+  font-family: var(--font-playfair), Georgia, 'Times New Roman', serif;
+}
+
+/* ─── White-mode glass surfaces ───────────────────────────────────────────── */
+.glass-white {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid #E1E1E1;
+}
+.glass-white-strong {
+  background: rgba(255,255,255,0.80);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  border: 1px solid #E1E1E1;
+}
+/* Standard glassmorphism card — applied to all landing cards */
+.glass-card {
+  background: rgba(255,255,255,0.65);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid #E1E1E1;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.05);
+}
+
+/* ─── Parent Portal — Linear-style amber sliders ─────────────────────────── */
+.parent-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 4px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+  width: 100%;
+  transition: opacity 0.15s;
+}
+.parent-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #FFBF00;
+  box-shadow: 0 0 0 4px rgba(255,191,0,0.18), 0 2px 8px rgba(255,191,0,0.35);
+  cursor: grab;
+  transition: box-shadow 0.15s, transform 0.1s;
+}
+.parent-slider::-webkit-slider-thumb:hover {
+  box-shadow: 0 0 0 7px rgba(255,191,0,0.2), 0 2px 10px rgba(255,191,0,0.4);
+  transform: scale(1.1);
+}
+.parent-slider::-webkit-slider-thumb:active {
+  cursor: grabbing;
+  box-shadow: 0 0 0 10px rgba(255,191,0,0.18), 0 2px 14px rgba(255,191,0,0.45);
+}
+.parent-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  background: #FFBF00;
+  box-shadow: 0 0 0 4px rgba(255,191,0,0.18);
+  cursor: grab;
+}
+
+/* ─── Animation keyframes ─────────────────────────────────────────────────── */
+@keyframes orbit-cw  { from { transform: rotate(0deg);    } to { transform: rotate(360deg);  } }
+@keyframes orbit-ccw { from { transform: rotate(0deg);    } to { transform: rotate(-360deg); } }
+@keyframes node-breathe {
+  0%,100% { opacity: 0.55; }
+  50%     { opacity: 1;    }
+}
+@keyframes ring-expand {
+  0%   { r: 4;  stroke-opacity: 0.6; }
+  100% { r: 22; stroke-opacity: 0;   }
+}
+@keyframes drift {
+  0%,100% { transform: translate(0px, 0px);    }
+  33%     { transform: translate(3px, -4px);   }
+  66%     { transform: translate(-4px, 2px);   }
+}
+
+.animate-orbit-cw    { animation: orbit-cw  70s linear infinite; }
+.animate-orbit-ccw   { animation: orbit-ccw 100s linear infinite; }
+.animate-node-breathe { animation: node-breathe 2.8s ease-in-out infinite; }
+
+/* Subtle card shadow — replace harsh AI-generated flat cards */
+.card-shadow {
+  box-shadow:
+    0 1px 2px rgba(0,0,0,0.04),
+    0 4px 12px rgba(0,0,0,0.05),
+    0 12px 32px rgba(0,0,0,0.04);
+}
+.card-shadow-hover {
+  box-shadow:
+    0 2px 4px rgba(0,0,0,0.06),
+    0 8px 24px rgba(0,0,0,0.08),
+    0 20px 48px rgba(0,0,0,0.05);
+}
