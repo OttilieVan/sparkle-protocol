@@ -93,10 +93,7 @@ export default function Nav() {
         borderBottom: '1px solid rgba(233,236,239,0.8)',
       }}
     >
-      <div
-        className="mx-auto flex items-center justify-between"
-        style={{ maxWidth: 1440, padding: '0 5%', mdPadding: '0 12%', height: 64 }}
-      >
+      <div className="mx-auto flex items-center justify-between px-[5%] md:px-[12%]" style={{ maxWidth: 1440, height: 64 }}>
         {/* ── Logo ── */}
         <Link href="/" onClick={() => setIsOpen(false)} style={{ textDecoration: 'none', flexShrink: 0 }}>
           <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
