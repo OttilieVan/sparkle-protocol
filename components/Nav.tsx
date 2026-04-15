@@ -2,11 +2,11 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useSparkle } from '@/app/providers'
 import { useEffect, useState, useRef } from 'react'
 
-// ── Three-petal flame SVG — exact paths provided ──────────────────────────────
+// ── 三色火焰图标 ─────────────────────────────────────────────────────────────
 function FlameIcon({ size = 36 }: { size?: number }) {
   const h = Math.round(size * (42 / 36))
   return (
@@ -29,24 +29,23 @@ const links = [
 export default function Nav() {
   const pathname = usePathname()
   const { state } = useSparkle()
+  const [isOpen, setIsOpen] = useState(false)
 
-  // ── Animated count-up when first activated (Top Up Fuel) ──────────────────
-  const [displayVal,      setDisplayVal]      = useState(0)
-  const activationDone  = useRef(false)
-  const rafRef          = useRef<number>(0)
-  const stakeAnimating  = useRef(false)          // suppress direct-set during stake roll-up
-  const prevStakeRev    = useRef(0)              // last handled stakeRevision
+  // ── 余额滚动逻辑 (保持不变) ──────────────────────────────────────────────
+  const [displayVal, setDisplayVal] = useState(0)
+  const activationDone = useRef(false)
+  const rafRef = useRef<number>(0)
+  const stakeAnimating = useRef(false)
+  const prevStakeRev = useRef(0)
 
-  // First-activation roll-up + live-balance tracking
   useEffect(() => {
     if (state.isActivated && !activationDone.current) {
-      // First activation — roll from 0 → current protocolBalance over 1.5 s
       activationDone.current = true
-      const target   = state.protocolBalance
+      const target = state.protocolBalance
       const DURATION = 1500
-      const started  = performance.now()
+      const started = performance.now()
       function tick(now: number) {
-        const t     = Math.min((now - started) / DURATION, 1)
+        const t = Math.min((now - started) / DURATION, 1)
         const eased = 1 - Math.pow(1 - t, 3)
         setDisplayVal(parseFloat((eased * target).toFixed(1)))
         if (t < 1) rafRef.current = requestAnimationFrame(tick)
@@ -54,7 +53,6 @@ export default function Nav() {
       rafRef.current = requestAnimationFrame(tick)
       return () => cancelAnimationFrame(rafRef.current)
     } else if (state.isActivated && !stakeAnimating.current) {
-      // Track live balance changes (drains, etc.) only when no stake roll-up is running
       setDisplayVal(state.protocolBalance)
     } else if (!state.isActivated) {
       cancelAnimationFrame(rafRef.current)
@@ -62,17 +60,16 @@ export default function Nav() {
     }
   }, [state.isActivated, state.protocolBalance])
 
-  // Stake event — count from 0 → new balance (fires when drawer closes + Frame 1 scrolls in)
   useEffect(() => {
     if (state.stakeRevision === 0 || state.stakeRevision <= prevStakeRev.current) return
     prevStakeRev.current = state.stakeRevision
     cancelAnimationFrame(rafRef.current)
     stakeAnimating.current = true
-    const target   = state.protocolBalance
+    const target = state.protocolBalance
     const DURATION = 1400
-    const started  = performance.now()
+    const started = performance.now()
     function tick(now: number) {
-      const t     = Math.min((now - started) / DURATION, 1)
+      const t = Math.min((now - started) / DURATION, 1)
       const eased = 1 - Math.pow(1 - t, 3)
       setDisplayVal(parseFloat((eased * target).toFixed(1)))
       if (t < 1) {
@@ -82,14 +79,12 @@ export default function Nav() {
       }
     }
     rafRef.current = requestAnimationFrame(tick)
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.stakeRevision])
 
   return (
     <motion.nav
       initial={{ y: -20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
-      transition={{ duration: 0.5, ease: 'easeOut' }}
       className="fixed top-0 left-0 right-0 z-50"
       style={{
         background: 'rgba(255,255,255,0.92)',
@@ -98,44 +93,34 @@ export default function Nav() {
         borderBottom: '1px solid rgba(233,236,239,0.8)',
       }}
     >
-      {/* Container aligned with 12% content padding */}
       <div
         className="mx-auto flex items-center justify-between"
-        style={{ maxWidth: 1440, padding: '0 12%', height: 60 }}
+        style={{ maxWidth: 1440, padding: '0 5%', mdPadding: '0 12%', height: 64 }}
       >
-
         {/* ── Logo ── */}
-        <Link href="/" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, cursor: 'pointer' }}
-          >
-            <FlameIcon size={32} />
+        <Link href="/" onClick={() => setIsOpen(false)} style={{ textDecoration: 'none', flexShrink: 0 }}>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+            <FlameIcon size={28} />
             <span style={{
               fontFamily: 'var(--font-lobster), "Lobster", cursive',
-              fontSize: 20,
-              fontWeight: 400,
-              letterSpacing: '0.01em',
-              color: '#1A1A1A',
-              lineHeight: 1,
-            }}>
-              Sparkle
-            </span>
+              fontSize: 20, color: '#1A1A1A'
+            }}>Sparkle</span>
           </span>
         </Link>
 
-        {/* ── Navigation links — centered ── */}
-        <nav className="hidden md:flex items-center gap-0.5" aria-label="Main navigation">
+        {/* ── Desktop Nav ── */}
+        <nav className="hidden md:flex items-center gap-1" aria-label="Main navigation">
           {links.map((link) => {
             const active = pathname === link.href
             return (
               <Link
                 key={link.href}
                 href={link.href}
-                className="relative px-4 py-1.5 rounded-full transition-colors duration-150"
+                className="relative px-4 py-1.5 rounded-full transition-colors"
                 style={{
                   fontSize: 13,
                   color: active ? '#111827' : '#6B7280',
                   fontWeight: active ? 600 : 400,
-                  letterSpacing: '0.01em',
                   textDecoration: 'none',
                 }}
               >
@@ -153,38 +138,76 @@ export default function Nav() {
           })}
         </nav>
 
-        {/* ── Credits pill ── */}
-        <Link href="/opportunity" style={{ textDecoration: 'none', flexShrink: 0 }}>
-          <motion.span
-            whileHover={{ background: 'rgba(206,32,41,0.04)' }}
-            transition={{ duration: 0.18 }}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 8,
-              padding: '7px 18px',
-              border: '1.5px solid rgba(206,32,41,0.28)',
-              borderRadius: 999,
-              fontSize: 13,
-              fontWeight: 500,
-              color: '#1A1A1A',
-              cursor: 'pointer',
-              background: 'transparent',
-            }}
-          >
-            <span style={{
-              width: 7, height: 7, borderRadius: '50%',
-              background: '#DC321E',
-              boxShadow: '0 0 5px rgba(206,32,41,0.6)',
-              flexShrink: 0,
-            }} />
-            <span style={{ fontVariantNumeric: 'tabular-nums' }}>
-              {displayVal.toFixed(1)}
-            </span>
-            <span style={{ color: '#DC321E', fontSize: 11 }}>✦</span>
-            <span>Credits</span>
-          </motion.span>
-        </Link>
+        {/* ── Right Actions ── */}
+        <div className="flex items-center gap-3">
+          {/* Credits Pill */}
+          <Link href="/opportunity" style={{ textDecoration: 'none' }}>
+            <motion.span
+              whileHover={{ background: 'rgba(206,32,41,0.04)' }}
+              className="flex items-center gap-2 px-3 py-1.5 md:px-4 md:py-2 border border-[#CE2029]/30 rounded-full bg-white/50"
+              style={{ fontSize: 12, fontWeight: 500, color: '#1A1A1A' }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#DC321E] shadow-[0_0_5px_rgba(206,32,41,0.6)]" />
+              <span style={{ fontVariantNumeric: 'tabular-nums' }}>{displayVal.toFixed(1)}</span>
+              <span className="text-[#DC321E]">✦</span>
+              <span className="hidden xs:inline">Credits</span>
+            </motion.span>
+          </Link>
 
+          {/* Hamburger Button (Mobile Only) */}
+          <button 
+            onClick={() => setIsOpen(!isOpen)}
+            className="md:hidden p-2 text-gray-600 focus:outline-none"
+            aria-label="Toggle menu"
+          >
+            <div className="w-6 h-5 relative flex flex-col justify-between overflow-hidden">
+              <motion.span 
+                animate={isOpen ? { rotate: 45, y: 8 } : { rotate: 0, y: 0 }}
+                className="w-full h-0.5 bg-current rounded-full origin-left"
+              />
+              <motion.span 
+                animate={isOpen ? { opacity: 0, x: 20 } : { opacity: 1, x: 0 }}
+                className="w-full h-0.5 bg-current rounded-full"
+              />
+              <motion.span 
+                animate={isOpen ? { rotate: -45, y: -8 } : { rotate: 0, y: 0 }}
+                className="w-full h-0.5 bg-current rounded-full origin-left"
+              />
+            </div>
+          </button>
+        </div>
       </div>
+
+      {/* ── Mobile Menu Overlay ── */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            className="md:hidden overflow-hidden bg-white/95 backdrop-blur-xl border-b border-gray-100"
+          >
+            <div className="flex flex-col p-6 gap-4">
+              {links.map((link, i) => (
+                <motion.div
+                  key={link.href}
+                  initial={{ x: -20, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ delay: i * 0.05 }}
+                >
+                  <Link
+                    href={link.href}
+                    onClick={() => setIsOpen(false)}
+                    className="block text-lg font-medium text-gray-800 hover:text-[#CE2029] transition-colors"
+                  >
+                    {link.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   )
 }
